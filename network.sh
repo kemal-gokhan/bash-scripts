@@ -58,6 +58,7 @@ sudo nmap -sS -iL $IPNETWORK5.txt  > $IPNETWORK5.txt.sorted.nmap
 
 #REMOVE ARTIFACTS
 rm $IPNETWORK1.txt & rm $IPNETWORK2.txt & rm $IPNETWORK3.txt & rm $IPNETWORK4.txt & rm $IPNETWORK5.txt
-
+mkdir networks-output && mv *.txt networks-output
 echo "Check sorted files"
-ls -lh
+router=$(ip route | grep default | awk '{print $3}')
+subnet=$(ip route | grep $router | awk '{print $1}' | grep -v default)
