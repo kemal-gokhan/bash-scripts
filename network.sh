@@ -14,14 +14,18 @@ IPNETWORK3=$(cat allnetworks.txt | head -n 3 | tail -n 1 )
 IPNETWORK4=$(cat allnetworks.txt | head -n 4 | tail -n 1 )
 IPNETWORK5=$(cat allnetworks.txt | head -n 5 | tail -n 1 )
 
+router=$(ip route | grep default | awk '{print $3}')
+subnet=$(ip route | grep $router | awk '{print $1}' | grep -v default)
+
 echo "YOUR IP ADRESS: $IPADDRESS1, $IPADDRESS2, $IPADDRESS3, $IPADDRESS4, $IPADDRESS5"
 echo "YOUR IP NETWORKS: $IPNETWORK1, $IPNETWORK2, $IPNETWORK3, $IPNETWORK4, $IPNETWORK5"
+echo "Route Table: $router" && echo "Subnet: $subnet"
 
 #REMOVE FILES
 rm allnetworks.txt & rm ipaddress.txt
 
 #NMAP INSTALLATION
-sudo apt-get install nmap -y
+sudo apt-get install nmap -y &
 
 for ip in {1..254}
 do
@@ -58,7 +62,5 @@ sudo nmap -sS -iL $IPNETWORK5.txt  > $IPNETWORK5.txt.sorted.nmap
 
 #REMOVE ARTIFACTS
 rm $IPNETWORK1.txt & rm $IPNETWORK2.txt & rm $IPNETWORK3.txt & rm $IPNETWORK4.txt & rm $IPNETWORK5.txt
-mkdir networks-output && mv *.txt networks-output
+mkdir networks-output && mv *.txt.sorted.nmap networks-output
 echo "Check sorted files"
-router=$(ip route | grep default | awk '{print $3}')
-subnet=$(ip route | grep $router | awk '{print $1}' | grep -v default)
